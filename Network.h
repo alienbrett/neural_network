@@ -5,7 +5,8 @@
 #include <cmath>
 #include <vector>
 #include <cstdlib>
-//#include "Network.h"
+#include <string>
+#include "VectorIO.h"
 
 
 class Network {
@@ -24,6 +25,7 @@ private:
 
 	std::vector<std::vector<float>> d_bias_tally;
 
+	char name [5];
 	unsigned int * batch_number = new unsigned int;
 	unsigned int  * epoch_number = new unsigned int;
 	unsigned int * mini_batch_size = new unsigned int;
@@ -37,7 +39,6 @@ private:
 public:
 
 	Network ( unsigned int n, std::vector<int> & param, unsigned int mbs, float lr, bool ce, bool reg, float rr);
-	//Network (const Network & nn);
 	bool set_input ( std::vector<float> & i);
 	void get_output (std::vector<float> & o);
 	void set_desired ( const std::vector<float> & y );
@@ -49,6 +50,8 @@ public:
 	void clear_d_weights_and_bias ();
 	void apply_derivatives ();
 	void run_mini_batch ( std::vector<std::vector<float>> & i, std::vector<std::vector<float>> & d, bool speak);
+	std::string get_name ();
+	void save_state ();
 
 	static float sigmoid (float a);
 	static float d_sigmoid (float a);
@@ -58,6 +61,7 @@ public:
 	static float random (float min, float max);
 	static void random_init_vector (std::vector<float> & a, float min, float max);
 	static void copy_vector ( const std::vector<float> & a, std::vector<float> b);
+	static char random_char();
 
 
 };

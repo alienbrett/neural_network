@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -std=c++11 -Wall -Wextra -Wshadow -pthread
 
-main: main.cpp Network.o VectorIO.o
+main.exe: main.cpp Network.o VectorIO.o
 	$(CC) $(CFLAGS) -o main main.cpp Network.o VectorIO.o
 
 Network.o: Network.cpp Network.h

@@ -2,7 +2,10 @@
 #include <cmath>
 #include <vector>
 #include <cstdlib>
+#include <string>
+#include <ctime>
 #include "Network.h"
+#include "VectorIO.h"
 
 #define report(x) std::cout << x << std::endl 
 
@@ -18,9 +21,11 @@ Network::Network ( unsigned int n, std::vector<int> & param, unsigned int mbs, f
 		cross_entropy = ce || reg;
 		l2_regularize = reg;
 		reg_rate = rr;
-		//report(reg_rate);
 
 		input.resize(n);
+		for (unsigned int x = 0; x < 5; ++x){
+			this->name[x] = Network::random_char();
+		}
 
 		weights.resize(param.size());
 		d_weight.resize(param.size());
@@ -232,6 +237,46 @@ void Network::run_mini_batch ( std::vector<std::vector<float>> & i, std::vector<
 		}
 	}
 
+std::string Network::get_name ()
+	{
+		char * a = new char (6);
+		for (unsigned int x = 0; x < 5; ++x){
+			a[x] = this->name[x];
+		}
+		a[5] = '\0';
+		return std::string(a);
+		delete a;
+	}
+
+void Network::save_state ()
+	{
+		std::time_t t = std::time(0);
+		struct tm * now = std::localtime( & t );
+		
+		std::string temp = (std::to_string(now->tm_year + 1900));
+		temp.append("-");
+		temp.append(std::to_string(now->tm_mon + 1));
+		temp.append("-");
+		temp.append(std::to_string(now->tm_mday));
+		temp.append("_");
+		temp.append(std::to_string(now->tm_hour));
+		temp.append(":");
+		temp.append(std::to_string(now->tm_min));
+		temp.append(":");
+		temp.append(std::to_string(now->tm_sec) );
+		temp.append(".");
+		temp.append(this->get_name());
+		temp.append(".bin");
+
+		std::fstream f (temp, std::ios::out | std::ios::binary);
+		VectorIO::write(this->weights, f);
+		VectorIO::write(this->bias, f);
+		f.close();
+	}
+
+
+
+
 float Network::sigmoid (float a)
 	{
 
@@ -247,7 +292,7 @@ float Network::d_sigmoid (float a)
 void Network::report_vector (std::vector<float> & a)
 	{
 		for (unsigned int x = 0; x < a.size() - 1; ++x){
-			std::cout << a[x] << ", ";
+			std::cout << a.at(x) << ", ";
 		}
 		std::cout << a.at(a.size()-1) << std::endl;
 	}
@@ -296,48 +341,15 @@ void Network::copy_vector ( const std::vector<float> & a, std::vector<float> b)
 		}
 	}
 
-
-
-/*
-	Network (const Network & nn){
-		learning_rate = nn.learning_rate;
-		mini_batch_size = nn.mini_batch_size;
-		epoch_number = nn.epoch_number;
-		*batch_number = 0;
-
-		input.resize(nn.input.size());
-		unsigned int w = nn.weights.size();
-		weights.resize(w);
-		d_weight.resize(w);
-
-		bias.resize(w);
-		value.resize(w);
-		activation.resize(w);
-		error.resize(w);
-		d_bias_tally.resize(w);
-
-		this->copy_vector( nn.desired, this->desired );
-
-		for (unsigned int x = 0; x < w; ++x){
-
-			this->weights[x].resize(nn.weights[x].size());
-			this->d_weight[x].resize(nn.weights[x].size());
-			
-			this->copy_vector( nn.bias[x], this->bias[x]);
-			this->copy_vector( nn.activation[x], this->activation[x]);
-			this->copy_vector( nn.value[x], this->value[x] );
-			this->copy_vector( nn.error[x], this->error[x]);
-			this->copy_vector( nn.d_bias_tally[x], this->d_bias_tally[x] );
-			
-			for (unsigned int y = 0; y < weights[x].size(); y++){
-				this->copy_vector( nn.weights[x][y] ,this->weights[x][y] );
-				this->copy_vector( nn.d_weight[x][y], d_weight[x][y] );
-			}
+char Network::random_char ()
+	{
+		unsigned int a = std::floor(Network::random (48,111));
+		if ( a > 57 && a < 84){
+			a+= 7;
+		} else if (a == 84){
+			a =  95;
+		} else if (a > 84){
+			a += 12;
 		}
-
-		for (unsigned int x = 0; x < bias.size(); ++x){
-			this->random_init_vector(bias[x], -2, 2);
-		}
-
+		return (char)a;
 	}
-	*/
