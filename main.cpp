@@ -93,7 +93,7 @@ int main (int argc, char * argv[]){
 		cout << "\t\t-l2......................enables L2 regularization and sets the\n\t\t\t\tregularization rate  (float, usually between 0.0001-5.0, depends on batch size)" << endl;
 		cout << "\t\t--cross_entropy..........enables the cross entropy cost method (does not require value)" << endl;
 		return 1;
-	} else{
+	} else{s
 
 		vector<int> dimensions;
 		for (unsigned int x = 0; x < l; ++x){
