@@ -78,6 +78,30 @@ Network::Network ( unsigned int n, std::vector<int> & param, unsigned int mbs, f
 		desired.resize(value.at(value.size()-1).size());
 	}
 
+Network::Network ( std::string file_name) // loads state from file 
+	{
+
+		std::fstream f (temp, std::ios::in | std::ios::binary);
+
+		if (f.is_open()){
+			VectorIO::read(this->weights, f);
+			VectorIO::read(this->bias, f);
+			std::vector<float> vals;
+
+			VectorIO::read(vals, f);
+			*this->learning_rate = vals[0];
+			this->input.size() = vals[1];
+			*this->epoch_number = vals[2];
+			*this->batch_number = vals[3];
+			this->reg_rate = vals[4];
+			this->cross_entropy = (bool)vals[5];
+
+		}
+
+		f.close();
+
+	}
+
 bool Network::set_input ( std::vector<float> & i)
 	{
 		if (i.size() != input.size()){
@@ -278,11 +302,22 @@ void Network::save_state ()
 		temp.append(".bin");
 
 		std::fstream f (temp, std::ios::out | std::ios::binary);
+
 		VectorIO::write(this->weights, f);
 		VectorIO::write(this->bias, f);
+		std::vector<float> vals;
+
+		vals.push_back(*this->learning_rate);
+		vals.push_back(this->input.size());
+		vals.push_back(*this->epoch_number);
+		vals.push_back(*this->batch_number);
+		vals.push_back(this->reg_rate);
+		vals.push_back((float)(this->cross_entropy));
+		VectorIO::write(vals, f);
+
+
 		f.close();
 	}
-
 
 
 
