@@ -4,11 +4,20 @@
 #include <cstdlib>
 #include <string>
 #include <ctime>
+#include <sstream>
 #include "Network.h"
 #include "VectorIO.h"
 
-#define report(x) std::cout << x << std::endl 
+#define report(x) std::cout << x << std::endl
 
+namespace patch{
+	template < typename T >
+	std::string to_string (const T& n){
+		std::ostringstream stm;
+		stm << n;
+		return stm.str();
+	}
+}
 
 Network::Network ( unsigned int n, std::vector<int> & param, unsigned int mbs, float lr, bool ce, bool reg, float rr)		// where n is size of input, param is std::vector of layer sizes, mbs is mini_batch_size and lr is learning rate
 	{
@@ -203,7 +212,7 @@ void Network::apply_derivatives ()
 		float reg_const = 1;
 		if (l2_regularize){
 			reg_const -= *learning_rate * reg_rate;
-		} 
+		}
 		for (unsigned int x = 0; x < weights.size(); ++x){
 			for (unsigned int y = 0; y < weights[x].size(); ++y){
 				bias[x][y] -= d_bias_tally[x][y] * *learning_rate / *mini_batch_size;
@@ -252,18 +261,18 @@ void Network::save_state ()
 	{
 		std::time_t t = std::time(0);
 		struct tm * now = std::localtime( & t );
-		
-		std::string temp = (std::to_string(now->tm_year + 1900));
+
+		std::string temp = (patch::to_string(now->tm_year + 1900));
 		temp.append("-");
-		temp.append(std::to_string(now->tm_mon + 1));
+		temp.append(patch::to_string(now->tm_mon + 1));
 		temp.append("-");
-		temp.append(std::to_string(now->tm_mday));
+		temp.append(patch::to_string(now->tm_mday));
 		temp.append("_");
-		temp.append(std::to_string(now->tm_hour));
+		temp.append(patch::to_string(now->tm_hour));
 		temp.append(":");
-		temp.append(std::to_string(now->tm_min));
+		temp.append(patch::to_string(now->tm_min));
 		temp.append(":");
-		temp.append(std::to_string(now->tm_sec) );
+		temp.append(patch::to_string(now->tm_sec) );
 		temp.append(".");
 		temp.append(this->get_name());
 		temp.append(".bin");

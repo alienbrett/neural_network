@@ -11,4 +11,4 @@ VectorIO.o: VectorIO.cpp VectorIO.h
 	$(CC) $(CFLAGS) -c VectorIO.cpp
 
 clean:
-	rm main *.o
+	del main main.exe *.o
